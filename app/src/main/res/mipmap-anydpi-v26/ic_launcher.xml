@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /**
+  ~  * Created by Teena Xiong on 10/30/19 12:03 AM
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  * Last modified 10/23/19 8:33 PM
+  ~  */
+  -->
+
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />
     <foreground android:drawable="@drawable/ic_launcher_foreground" />

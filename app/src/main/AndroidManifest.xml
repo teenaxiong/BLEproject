@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /**
+  ~  * Created by Teena Xiong on 10/30/19 12:03 AM
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  * Last modified 10/27/19 9:26 PM
+  ~  */
+  -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bleproject">
     <uses-permission android:name="android.permission.BLUETOOTH"/>

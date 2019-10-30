@@ -1,3 +1,13 @@
+
+
+/*
+ * *
+ *  * Created by Teena Xiong on 10/30/19 12:03 AM
+ *  * Copyright (c) 2019 . All rights reserved.
+ *  * Last modified 10/30/19 12:01 AM
+ *
+ */
+
 package com.example.bleproject;
 
 import androidx.appcompat.app.AlertDialog;

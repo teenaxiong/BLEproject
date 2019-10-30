@@ -1,3 +1,11 @@
+<!--
+  ~ /**
+  ~  * Created by Teena Xiong on 10/30/19 12:03 AM
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  * Last modified 10/29/19 10:41 PM
+  ~  */
+  -->
+
 <vector android:alpha="0.53" android:height="24dp"
     android:viewportHeight="24.0" android:viewportWidth="24.0"
     android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
