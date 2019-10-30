@@ -6,11 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="111dp"
+        android:layout_height="91dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOn"
+        app:layout_constraintVertical_bias="0.051" />
+
     <TextView
         android:id="@+id/textViewTemperature"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
         android:textAlignment="center"
         android:textSize="80sp"
         app:layout_constraintTop_toBottomOf="@+id/buttonOn"
@@ -18,9 +29,9 @@
 
     <ImageView
         android:id="@+id/ImageBeepOn"
-        android:layout_width="100sp"
-        android:layout_height="100sp"
-        android:layout_marginStart="50dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="76dp"
         android:text="Beep On"
         android:textAlignment="center"
         android:textSize="20sp"
@@ -30,9 +41,9 @@
 
     <ImageView
         android:id="@+id/ImageBeepOff"
-        android:layout_width="100sp"
-        android:layout_height="100sp"
-        android:layout_marginEnd="50dp"
+        android:layout_width="80sp"
+        android:layout_height="80sp"
+        android:layout_marginEnd="76dp"
         android:text="Beep Off"
         android:textAlignment="center"
         android:textSize="20sp"
@@ -45,12 +56,12 @@
         android:id="@+id/buttonOn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="9dp"
+        android:background="@color/colorPrimary"
         android:text="@string/buttonOn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/buttonOff"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/colorPrimary"/>
+        app:layout_constraintTop_toBottomOf="@+id/imageViewLighBulbOff" />
 
     <Button
         android:id="@+id/buttonOff"
@@ -64,16 +75,23 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/buttonOn"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="131dp"
-        android:layout_height="130dp"
+    <ImageView
+        android:id="@+id/imageViewLighBulbOff"
+        android:layout_width="262dp"
+        android:layout_height="255dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.356" />
+        app:srcCompat="@drawable/lightbulb_off" />
+
+    <ImageView
+        android:id="@+id/imageViewLighbulbOn"
+        android:layout_width="262dp"
+        android:layout_height="255dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/imageViewLighBulbOff"
+        app:layout_constraintStart_toStartOf="@id/imageViewLighBulbOff"
+        app:layout_constraintTop_toTopOf="@id/imageViewLighBulbOff"
+        app:srcCompat="@drawable/lightbulb_on" />
 </androidx.constraintlayout.widget.ConstraintLayout>

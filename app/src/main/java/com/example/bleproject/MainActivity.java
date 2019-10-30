@@ -15,8 +15,6 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,17 +24,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter bluetoothAdapter;
-    private BluetoothLeScanner blueToothLeScanner;
     private static int REQUEST_ENABLE_BT = 1;
     private boolean mScanning;
     private Handler handler;
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static UUID BULB_CHARACTERISTIC_UUID = UUID.fromString("FB959362-F26E-43A9-927C-7E17D8FB2D8D");
     private static UUID TEMPERATURE_CHARACTERISTIC_UUID = UUID.fromString("0CED9345-B31F-457D-A6A2-B3DB9B03E39A");
     private static UUID BEEP_CHARACTERISTIC_UUID = UUID.fromString("EC958823-F26E-43A9-927C-7E17D8F32A90");
-    //private static UUID SERIVCE_UUID = UUID.fromString("dffa041d-9e1b-6f38-3035-63bdd4024a4d");
+    private static UUID SERIVCE_UUID = UUID.fromString("dffa041d-9e1b-6f38-3035-63bdd4024a4d");
     private UUID[] SERVICE_UUID_LIST;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     public static UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002934-0000-1000-8000-00805f9b34fb");
@@ -54,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static int BEEP_TYPE = 2;
     private static final long SCAN_PERIOD = 10000;
     private ProgressBar progressBar;
+    private boolean isBulbOn = false;
+    private ImageView bulbOn, bulbOff;
 
 
     @Override
@@ -65,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         SERVICE_UUID_LIST = new UUID[1];
         SERVICE_UUID_LIST[0] = UUID.fromString("dffa041d-9e1b-6f38-3035-63bdd4024a4d");
+
+        bulbOn = findViewById(R.id.imageViewLighbulbOn);
+        bulbOff = findViewById(R.id.imageViewLighBulbOff);
 
         // Use this check to determine whether BLE is supported on the device. Then
         // you can selectively disable BLE-related features.
@@ -129,6 +130,14 @@ public class MainActivity extends AppCompatActivity {
                 writeCharacteristic(value, BEEP_TYPE);
             }
         });
+
+        if(isBulbOn){
+            bulbOff.setVisibility(View.INVISIBLE);
+            bulbOn.setVisibility(View.VISIBLE);
+        }else{
+            bulbOn.setVisibility(View.INVISIBLE);
+            bulbOff.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -150,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mScanning = false;
                     mScanning = false;
                     bluetoothAdapter.stopLeScan(leScanCallback);
                 }
@@ -195,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(MainActivity.this, "Successfuly Connected. " +
+                                    "One moment please... ", Toast.LENGTH_SHORT).show();
                         }
                     });
                     BluetoothGatt b = gatt;
@@ -223,22 +232,58 @@ public class MainActivity extends AppCompatActivity {
 
 
                 gatt.setCharacteristicNotification(temperatureCharacteristic, true);
+
              /*   for (BluetoothGattDescriptor descriptor:temperatureCharacteristic.getDescriptors()){
                     Log.e("thedemodesrip", "BluetoothGattDescriptor: "+descriptor.getUuid().toString());
-                }
-                BluetoothGattDescriptor descriptor = temperatureCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                }*/
+          /*      BluetoothGattDescriptor descriptor = temperatureCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
                 descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                gatt.readDescriptor(descriptor);*/
-
+                gatt.readDescriptor(descriptor);
+*/
+                BluetoothGattCharacteristic bulbCharacteristic = service.getCharacteristic(BULB_CHARACTERISTIC_UUID);
+                bluetoothGatt.readCharacteristic(bulbCharacteristic);
             } else if (status == BluetoothProfile.STATE_DISCONNECTED) {
                 Toast.makeText(MainActivity.this, "Unable to connect", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicRead(gatt, characteristic, status);
+            Log.d("thedemo", characteristic.getStringValue(0));
+            if(characteristic.getStringValue(0).equals("0")){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bulbOff.setVisibility(View.VISIBLE);
+                        bulbOn.setVisibility(View.INVISIBLE);
+                    }
+                });
+                isBulbOn = false;
+            }else {
+                isBulbOn = true;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bulbOff.setVisibility(View.INVISIBLE);
+                        bulbOn.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+
+        }
+
+        @Override
         public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
             super.onDescriptorRead(gatt, descriptor, status);
-            BluetoothGattCharacteristic characteristic = gatt.getService(SERVICE_UUID_LIST[0]).getCharacteristic(TEMPERATURE_CHARACTERISTIC_UUID);
+          /*  final BluetoothGattCharacteristic characteristic = gatt.getService(SERVICE_UUID_LIST[0]).getCharacteristic(TEMPERATURE_CHARACTERISTIC_UUID);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView temp = findViewById(R.id.textViewTemperature);
+                    temp.setText(characteristic.getStringValue(0) + " F");
+                }
+            });*/
         }
 
         @Override
@@ -246,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    progressBar.setVisibility(View.GONE);
                     TextView temp = findViewById(R.id.textViewTemperature);
                     temp.setText(characteristic.getStringValue(0) + " F");
                 }
@@ -253,15 +299,28 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public boolean writeCharacteristic(byte value[], int type) {
+    public void writeCharacteristic(final byte value[], int type) {
         //check mBluetoothGatt is available
         if (bluetoothGatt == null) {
-            Log.e("thedemo in write", "lost connection");
-            return false;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "NO CONNECTION TO BLUETOOTH", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+            return;
         }
         BluetoothGattService Service = bluetoothGatt.getService(SERVICE_UUID_LIST[0]);
         if (Service == null) {
-            return false;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "No service found", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+            return;
         }
         BluetoothGattCharacteristic charac1 = null;
         boolean status1 = false;
@@ -270,16 +329,57 @@ public class MainActivity extends AppCompatActivity {
             charac1 = Service.getCharacteristic(BULB_CHARACTERISTIC_UUID);
             charac1.setValue(value);
             status1 = bluetoothGatt.writeCharacteristic(charac1);
-        } else if (type == 2) {
+            final boolean finalStatus = status1;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(!finalStatus){
+                        Toast.makeText(MainActivity.this, "UNSUCCESSFUL ATTEMPT", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(value[0] == ONE){
+                        bulbOff.setVisibility(View.INVISIBLE);
+                        bulbOn.setVisibility(View.VISIBLE);
+                        Toast.makeText(MainActivity.this, "BULB ON", Toast.LENGTH_SHORT).show();
+                    }else{
+                        bulbOff.setVisibility(View.VISIBLE);
+                        bulbOn.setVisibility(View.INVISIBLE);
+                        Toast.makeText(MainActivity.this, "BULB OFF", Toast.LENGTH_SHORT).show();
 
+                    }
+                }
+            });
+        } else if (type == 2) {
             charac1 = Service.getCharacteristic(BEEP_CHARACTERISTIC_UUID);
             charac1.setValue(value);
             status1 = bluetoothGatt.writeCharacteristic(charac1);
+            final boolean finalStatus1 = status1;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(!finalStatus1){
+                        Toast.makeText(MainActivity.this, "UNSUCCESSFUL ATTEMPT", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(value[0] == ONE){
+                        Toast.makeText(MainActivity.this, "ALARM ON", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, "ALARM OFF", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            });
         }
         if (charac1 == null) {
-            return false;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "UNSUCCESFFUL", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return;
         }
-        return status1;
+        return;
     }
 
     @Override
